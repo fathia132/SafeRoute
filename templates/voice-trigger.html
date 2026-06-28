@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Trigger Settings - SafeRoute</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5f5f 0%, #2a8f8f 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #1a5f5f;
+            margin-right: 15px;
+        }
+
+        h1 {
+            color: #1a5f5f;
+            font-size: 24px;
+        }
+
+        .icon {
+            font-size: 28px;
+            margin-right: 10px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border-left: 4px solid #ffc857;
+        }
+
+        .section h2 {
+            color: #1a5f5f;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 30px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #1a5f5f;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="range"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #1a5f5f;
+            box-shadow: 0 0 5px rgba(26, 95, 95, 0.2);
+        }
+
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            padding: 0;
+            height: 6px;
+        }
+
+        .sensitivity-value {
+            color: #1a5f5f;
+            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #1a5f5f;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0f3f3f;
+        }
+
+        .btn-secondary {
+            background: #ffc857;
+            color: #1a5f5f;
+        }
+
+        .btn-secondary:hover {
+            background: #ffb327;
+        }
+
+        .btn-test {
+            grid-column: 1 / -1;
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-test:hover {
+            background: #45a049;
+        }
+
+        .btn-test:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            display: block;
+        }
+
+        .listening-indicator {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            color: #0c5460;
+            margin-top: 15px;
+        }
+
+        .listening-indicator.active {
+            display: flex;
+        }
+
+        .pulse {
+            width: 12px;
+            height: 12px;
+            background: #0c5460;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #1565c0;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+
+        .info-box li {
+            margin-bottom: 5px;
+        }
+
+        .mic-icon {
+            font-size: 40px;
+            text-align: center;
+            color: #1a5f5f;
+            margin: 20px 0;
+        }
+
+        .not-supported {
+            padding: 15px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            color: #856404;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <h1><span class="icon">🎤</span>Voice Trigger</h1>
+        </div>
+
+        <!-- Enable Voice Trigger -->
+        <div class="section">
+            <h2>Enable Voice Trigger</h2>
+            <div class="toggle-container">
+                <span>Activate voice-based emergency alerts</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="voiceTriggerToggle">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Distress Word Settings -->
+        <div class="section" id="settingsSection" style="display: none;">
+            <h2>Custom Distress Word</h2>
+            <div class="form-group">
+                <label for="distressWord">
+                    Your Distress Word/Phrase
+                    <br><small style="font-size: 12px; color: #666;">
+                        Use 1-2 words (e.g., "Help", "Danger", "SOS", "Help me now")
+                    </small>
+                </label>
+                <input 
+                    type="text" 
+                    id="distressWord" 
+                    placeholder="e.g., Help" 
+                    value="help"
+                    autocomplete="off"
+                >
+            </div>
+
+            <h2 style="margin-top: 25px;">Sensitivity Level</h2>
+            <div class="form-group">
+                <label for="sensitivity">Microphone Sensitivity</label>
+                <div class="range-container">
+                    <input 
+                        type="range" 
+                        id="sensitivity" 
+                        min="0.3" 
+                        max="0.9" 
+                        step="0.1"
+                        value="0.7"
+                    >
+                    <span class="sensitivity-value" id="sensitivityValue">0.7</span>
+                </div>
+                <small style="color: #666; margin-top: 5px;">
+                    Lower = more sensitive (catches quieter words)
+                    <br>Higher = less sensitive (avoids false triggers)
+                </small>
+            </div>
+
+            <!-- Test Voice Recognition -->
+            <div style="margin-top: 25px;">
+                <h2>Test Voice Recognition</h2>
+                <button class="btn-test" id="testBtn" onclick="testVoiceRecognition()">
+                    🎙️ Test Your Distress Word
+                </button>
+                <div class="listening-indicator" id="listeningIndicator">
+                    <div class="pulse"></div>
+                    <span id="listeningText">Listening... say your distress word</span>
+                </div>
+                <div class="status" id="testStatus"></div>
+            </div>
+
+            <!-- Save Settings -->
+            <div class="button-group">
+                <button class="btn-primary" onclick="saveVoiceSettings()">💾 Save Settings</button>
+                <button class="btn-secondary" onclick="resetSettings()">🔄 Reset</button>
+            </div>
+
+            <!-- Info Box -->
+            <div class="info-box">
+                <strong>ℹ️ How Voice Trigger Works:</strong>
+                <ul>
+                    <li>App listens for your custom distress word</li>
+                    <li>Works in background (minimize app safely)</li>
+                    <li>No visual alert (won't draw attention)</li>
+                    <li>Automatically sends emergency alert with your location</li>
+                    <li>Requires microphone permission</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Status Messages -->
+        <div class="status" id="mainStatus"></div>
+
+        <!-- Browser Support Check -->
+        <div id="browserNotSupported"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/voice-trigger.js') }}"></script>
+    <script>
+        // Check browser support
+        function checkBrowserSupport() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const supported = !!SpeechRecognition;
+
+            if (!supported) {
+                document.getElementById('browserNotSupported').innerHTML = `
+                    <div class="not-supported">
+                        ⚠️ Voice recognition is not supported in your browser.
+                        <br>Please use Chrome, Edge, or Safari on iOS 14.5+
+                    </div>
+                `;
+                document.getElementById('voiceTriggerToggle').disabled = true;
+                document.getElementById('settingsSection').style.display = 'none';
+            }
+
+            return supported;
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkBrowserSupport();
+            loadVoiceSettings();
+
+            // Toggle settings visibility
+            document.getElementById('voiceTriggerToggle').addEventListener('change', function() {
+                const settingsSection = document.getElementById('settingsSection');
+                settingsSection.style.display = this.checked ? 'block' : 'none';
+                
+                if (this.checked) {
+                    startVoiceListener();
+                    showStatus('Voice trigger enabled. Listening for your distress word...', 'success');
+                } else {
+                    stopVoiceListener();
+                    showStatus('Voice trigger disabled', 'info');
+                }
+            });
+
+            // Update sensitivity display
+            document.getElementById('sensitivity').addEventListener('input', function() {
+                document.getElementById('sensitivityValue').textContent = this.value;
+            });
+        });
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('mainStatus');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            setTimeout(() => {
+                statusEl.className = 'status';
+            }, 4000);
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alert History - SafeRoute</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5f5f 0%, #2a8f8f 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #1a5f5f;
+            font-size: 26px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #1a5f5f;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #1a5f5f 0%, #2a8f8f 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .stat-card.voice {
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+        }
+
+        .stat-card.manual {
+            background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+        }
+
+        .stat-card.contacts {
+            background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%);
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #1a5f5f;
+            background: white;
+            color: #1a5f5f;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: #1a5f5f;
+            color: white;
+        }
+
+        .filter-btn:hover {
+            background: #1a5f5f;
+            color: white;
+        }
+
+        .alerts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .alert-item {
+            background: #f9f9f9;
+            border-left: 4px solid #1a5f5f;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .alert-item:hover {
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+            transform: translateX(5px);
+        }
+
+        .alert-item.voice {
+            border-left-color: #4CAF50;
+        }
+
+        .alert-item.manual {
+            border-left-color: #ff9800;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .alert-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-voice {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-manual {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .alert-title {
+            color: #1a5f5f;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .alert-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .info-item {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .alert-time {
+            text-align: right;
+            color: #999;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            color: #1a5f5f;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .alert-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .alert-time {
+                text-align: left;
+                margin-top: 10px;
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <h1>📊 Alert History</h1>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <h3>Total Alerts</h3>
+                <div class="number" id="totalAlerts">0</div>
+            </div>
+            <div class="stat-card voice">
+                <h3>🎤 Voice Alerts</h3>
+                <div class="number" id="voiceAlerts">0</div>
+            </div>
+            <div class="stat-card manual">
+                <h3>🔴 Manual Alerts</h3>
+                <div class="number" id="manualAlerts">0</div>
+            </div>
+            <div class="stat-card contacts">
+                <h3>Contacts Reached</h3>
+                <div class="number" id="contactsReached">0</div>
+            </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterAlerts('all')">All Alerts</button>
+            <button class="filter-btn" onclick="filterAlerts('voice')">🎤 Voice Triggered</button>
+            <button class="filter-btn" onclick="filterAlerts('manual')">🔴 Manual Triggered</button>
+        </div>
+
+        <!-- Alerts List -->
+        <div class="alerts-container" id="alertsContainer">
+            <div class="empty-state">
+                <h3>No alerts yet</h3>
+                <p>Your emergency alerts will appear here</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFilter = 'all';
+        let alertsData = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAlerts();
+            loadStats();
+        });
+
+        async function loadAlerts() {
+            try {
+                // This would fetch from your backend
+                // For now, we'll load from session storage or display message
+                const container = document.getElementById('alertsContainer');
+                
+                // You can implement actual alert fetching here
+                // const response = await fetch('/api/alerts');
+                // alertsData = await response.json();
+                
+                displayAlerts(alertsData);
+            } catch (error) {
+                console.error('Error loading alerts:', error);
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/alert-stats');
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('totalAlerts').textContent = data.total_alerts;
+                    document.getElementById('voiceAlerts').textContent = data.voice_alerts;
+                    document.getElementById('manualAlerts').textContent = data.manual_alerts;
+                    document.getElementById('contactsReached').textContent = data.contacts_reached;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        function displayAlerts(alerts) {
+            const container = document.getElementById('alertsContainer');
+
+            if (!alerts || alerts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No alerts triggered yet</h3>
+                        <p>Your emergency alerts will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = alerts.map(alert => `
+                <div class="alert-item ${alert.trigger_type}">
+                    <div class="alert-content">
+                        <div class="alert-header">
+                            <span class="alert-badge badge-${alert.trigger_type}">
+                                ${alert.trigger_type === 'voice' ? '🎤 Voice' : '🔴 Manual'}
+                            </span>
+                            <span class="alert-title">Emergency Alert Triggered</span>
+                        </div>
+                        <div class="alert-info">
+                            <div class="info-item">
+                                <span class="info-label">Type:</span>
+                                ${alert.trigger_type === 'voice' ? 'Voice Activated' : 'Manual Button'}
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Contacts:</span>
+                                ${alert.contacts_notified} notified
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Location:</span>
+                                ${alert.latitude ? `${alert.latitude.toFixed(2)}, ${alert.longitude.toFixed(2)}` : 'N/A'}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert-time">
+                        ${new Date(alert.created_at).toLocaleString()}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterAlerts(type) {
+            currentFilter = type;
+
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Filter and display
+            const filtered = type === 'all' 
+                ? alertsData 
+                : alertsData.filter(a => a.trigger_type === type);
+            
+            displayAlerts(filtered);
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        // Auto-refresh stats every 30 seconds
+        setInterval(loadStats, 30000);
+    </script>
+</body>
+</html>

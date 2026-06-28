@@ -61,6 +61,17 @@ class EmergencyContact(db.Model):
     relationship = db.Column(db.String(50))
 
 
+class AlertLog(db.Model):
+    __tablename__ = 'alert_logs'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    trigger_type = db.Column(db.String(20), default='manual')  # 'manual', 'voice', 'timer'
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    contacts_notified = db.Column(db.Integer)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+
 # ==================== ROUTES ====================
 
 @app.route('/')
@@ -155,9 +166,18 @@ def dashboard():
     return render_template('dashboard.html', user=user, contacts=contacts)
 
 
+@app.route('/voice-trigger')
+def voice_trigger_settings():
+    """Voice trigger settings page"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    return render_template('voice-trigger.html')
+
+
 @app.route('/emergency', methods=['POST'])
 def emergency_alert():
-    """Trigger emergency alert"""
+    """Trigger emergency alert (manual or voice)"""
     if 'user_id' not in session:
         return jsonify({'success': False, 'message': 'Not authenticated'}), 401
 
@@ -165,6 +185,7 @@ def emergency_alert():
         data = request.get_json()
         latitude = data.get('latitude')
         longitude = data.get('longitude')
+        trigger_type = data.get('trigger_type', 'manual')  # 'manual' or 'voice'
 
         user = User.query.get(session['user_id'])
         contacts = EmergencyContact.query.filter_by(user_id=session['user_id']).all()
@@ -172,9 +193,25 @@ def emergency_alert():
         if not contacts:
             return jsonify({'success': False, 'message': 'No emergency contacts added'}), 400
 
+        # Log the alert
+        alert_log = AlertLog(
+            user_id=session['user_id'],
+            trigger_type=trigger_type,
+            latitude=latitude,
+            longitude=longitude,
+            contacts_notified=len(contacts)
+        )
+        db.session.add(alert_log)
+        db.session.commit()
+
         # Google Maps URL
         location_url = f"https://maps.google.com/?q={latitude},{longitude}"
-        message = f"EMERGENCY: {user.username} needs help! Location: {location_url}"
+        
+        # Alert message (adapt based on trigger type)
+        if trigger_type == 'voice':
+            message = f"🚨 URGENT - VOICE ALERT: {user.username} needs immediate help! Location: {location_url}"
+        else:
+            message = f"🚨 EMERGENCY: {user.username} needs help! Location: {location_url}"
 
         # Send SMS to all contacts
         if twilio_client:
@@ -185,18 +222,19 @@ def emergency_alert():
                         from_=TWILIO_PHONE_NUMBER,
                         to=contact.phone_number
                     )
-                    print(f"✓ SMS sent to {contact.phone_number}")
+                    print(f"✓ {trigger_type.upper()} SMS sent to {contact.phone_number}")
                 except Exception as e:
                     print(f"✗ SMS failed for {contact.phone_number}: {str(e)}")
 
         return jsonify({
             'success': True,
-            'message': 'Emergency alert sent',
+            'message': f'Emergency alert sent via {trigger_type}',
             'contacts_notified': len(contacts)
         }), 200
 
     except Exception as e:
         print(f"Emergency alert error: {str(e)}")
+        db.session.rollback()
         return jsonify({'success': False, 'message': 'Failed to send alert'}), 500
 
 
@@ -224,6 +262,42 @@ def add_contact():
         db.session.rollback()
         print(f"Add contact error: {str(e)}")
         return jsonify({'success': False, 'message': 'Failed to add contact'}), 500
+
+
+@app.route('/alert-history')
+def alert_history():
+    """View alert history"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    alerts = AlertLog.query.filter_by(user_id=session['user_id']).order_by(AlertLog.created_at.desc()).limit(50).all()
+    return render_template('alert-history.html', alerts=alerts)
+
+
+@app.route('/alert-stats', methods=['GET'])
+def alert_stats():
+    """Get alert statistics"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Not authenticated'}), 401
+
+    try:
+        user_alerts = AlertLog.query.filter_by(user_id=session['user_id']).all()
+        
+        total_alerts = len(user_alerts)
+        voice_alerts = sum(1 for alert in user_alerts if alert.trigger_type == 'voice')
+        manual_alerts = sum(1 for alert in user_alerts if alert.trigger_type == 'manual')
+        
+        return jsonify({
+            'success': True,
+            'total_alerts': total_alerts,
+            'voice_alerts': voice_alerts,
+            'manual_alerts': manual_alerts,
+            'contacts_reached': sum(alert.contacts_notified or 0 for alert in user_alerts)
+        }), 200
+
+    except Exception as e:
+        print(f"Stats error: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to fetch stats'}), 500
 
 
 @app.route('/logout')
@@ -266,6 +340,7 @@ if __name__ == '__main__':
     
     if debug_mode:
         print("🚀 Running in DEVELOPMENT mode")
+        print("🎤 Voice trigger available at /voice-trigger")
         app.run(debug=True, host='0.0.0.0', port=5000)
     else:
         print("🚀 Running in PRODUCTION mode")
