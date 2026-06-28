@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Create Account – Safety Saver</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #F0EDE6;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 420px;
+    min-height: 100vh;
+    background: #FAFAF8;
+    position: relative;
+  }
+
+  /* BACK BUTTON */
+  .page-header {
+    padding: 20px 20px 0;
+  }
+  .back-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid #E0DAD0;
+    background: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #1A1A1A;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  /* DECORATIVE BLOBS */
+  .blob-wrap {
+    position: relative;
+    height: 60px;
+    overflow: visible;
+  }
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    background: #D6EDE0;
+    opacity: 0.5;
+  }
+  .blob-1 { width: 100px; height: 100px; top: -30px; right: 20px; }
+  .blob-2 { width: 60px; height: 60px; top: 0px; right: 100px; opacity: 0.3; }
+
+  /* MAIN CONTENT */
+  .signup-wrap {
+    padding: 10px 24px 48px;
+  }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #1A1A1A;
+    margin-bottom: 28px;
+    text-align: center;
+    letter-spacing: -0.5px;
+  }
+
+  /* SOCIAL BUTTONS */
+  .btn {
+    width: 100%;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: opacity 0.15s, transform 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn:active { transform: scale(0.97); opacity: 0.9; }
+
+  .btn-facebook {
+    background: rgb(13, 92, 13);
+    color: white;
+    margin-bottom: 12px;
+  }
+
+  .btn-google {
+    background: white;
+    color: #1A1A1A;
+    border: 1.5px solid #E0DAD0;
+    margin-bottom: 4px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0 18px;
+    color: #AAAAAA;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #E8E4DC;
+  }
+
+  /* INPUTS */
+  .input-wrap {
+    position: relative;
+    margin-bottom: 12px;
+  }
+  .input-wrap input {
+    width: 100%;
+    padding: 15px 44px 15px 16px;
+    border: 1.5px solid #E8E4DC;
+    border-radius: 14px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    background: white;
+    color: #1A1A1A;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .input-wrap input::placeholder { color: #BBBBBB; }
+  .input-wrap input:focus { border-color: #1B5E3B; }
+  .input-wrap input.valid { border-color: #2E7D52; }
+
+  .check-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #2E7D52;
+    font-size: 16px;
+    font-weight: 700;
+    display: none;
+  }
+  .input-wrap input.valid ~ .check-icon { display: block; }
+
+  .eye-icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .eye-icon svg { display: block; }
+  .eye-lid {
+    transition: d 0.2s;
+  }
+
+  /* PRIVACY */
+  .privacy-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #666;
+    margin: 16px 0 24px;
+  }
+  .privacy-row input[type=checkbox] {
+    width: 18px; height: 18px;
+    border-radius: 4px;
+    accent-color: #1B5E3B;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .privacy-row a { color: #1B5E3B; text-decoration: underline; }
+
+  /* GET STARTED */
+  .btn-primary {
+    background: #1B5E3B;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  /* SIGNIN LINK */
+  .signin-link {
+    text-align: center;
+    font-size: 12px;
+    color: #AAAAAA;
+    margin-top: 20px;
+    letter-spacing: 0.3px;
+  }
+  .signin-link a {
+    color: #1B5E3B;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  /* TOAST */
+  #toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(16px);
+    background: #1A1A1A;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 13px;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+    pointer-events: none;
+    white-space: nowrap;
+    font-family: 'Inter', sans-serif;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="page-header">
+    <a href="/" class="back-btn">←</a>
+  </div>
+
+  <div class="blob-wrap">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <div class="signup-wrap">
+    <h2>Create your account</h2>
+
+    <!-- Facebook -->
+    <button class="btn btn-facebook" onclick="window.location='/auth/facebook'">
+      <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
+        <path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+      </svg>
+      CONTINUE WITH FACEBOOK
+    </button>
+
+    <!-- Google -->
+    <button class="btn btn-google" onclick="window.location='/auth/google'">
+      <svg width="20" height="20" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      </svg>
+      CONTINUE WITH GOOGLE
+    </button>
+
+    <div class="divider">OR LOG IN WITH EMAIL</div>
+
+    <div class="input-wrap">
+      <input type="text" id="name" placeholder="Full name" oninput="validate(this)" autocomplete="name"/>
+      <span class="check-icon">✓</span>
+    </div>
+    <div class="input-wrap">
+      <input type="email" id="email" placeholder="Email address" oninput="validate(this)" autocomplete="email"/>
+      <span class="check-icon">✓</span>
+    </div>
+    <div class="input-wrap">
+      <input type="password" id="password" placeholder="Password" autocomplete="new-password"/>
+      <span class="eye-icon" id="eyeToggle" onclick="togglePassword()">
+        <svg id="eyeSVG" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 11C1 11 4.5 4 11 4C17.5 4 21 11 21 11C21 11 17.5 18 11 18C4.5 18 1 11 1 11Z"
+            stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round" fill="white"/>
+          <circle cx="11" cy="11" r="3" fill="#AAAAAA" id="eyePupil"/>
+          <path id="eyeLid"
+            d="M1 11C4.5 4 17.5 4 21 11"
+            stroke="white" stroke-width="7" stroke-linecap="round" fill="none" style="display:none"/>
+          <path id="eyeLash"
+            d="M1 11C4.5 4 17.5 4 21 11"
+            stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round" fill="none" style="display:none"/>
+          <line id="eyeStrike" x1="3" y1="19" x2="19" y2="3" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round" style="display:none"/>
+        </svg>
+      </span>
+    </div>
+
+    <div class="privacy-row">
+      <input type="checkbox" id="privacy"/>
+      <label for="privacy">I have read the <a href="/privacy">Privacy Policy</a></label>
+    </div>
+
+    <button class="btn btn-primary" onclick="doSignup()">GET STARTED</button>
+
+    <p class="signin-link">ALREADY HAVE AN ACCOUNT? <a href="/signin">LOG IN</a></p>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+function validate(input) {
+  input.classList.toggle('valid', input.value.trim().length > 0);
+}
+
+let passwordVisible = false;
+function togglePassword() {
+  passwordVisible = !passwordVisible;
+  const pw = document.getElementById('password');
+  const eye = document.getElementById('eyeToggle');
+  pw.type = passwordVisible ? 'text' : 'password';
+  // SVG eyelid open/close
+  document.getElementById('eyePupil').style.display = passwordVisible ? 'block' : 'none';
+  document.getElementById('eyeLid').style.display = passwordVisible ? 'block' : 'none';
+  document.getElementById('eyeLash').style.display = passwordVisible ? 'block' : 'none';
+  document.getElementById('eyeStrike').style.display = 'none';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+async function doSignup() {
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const privacy = document.getElementById('privacy').checked;
+
+  if (!name || !email || !password) return showToast('Please fill all fields');
+  if (!privacy) return showToast('Please accept the Privacy Policy');
+  if (password.length < 6) return showToast('Password must be at least 6 characters');
+
+  try {
+    const res = await fetch('/api/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password })
+    });
+    const data = await res.json();
+    if (data.success) {
+      window.location = data.redirect;
+    } else {
+      showToast(data.error || 'Signup failed');
+    }
+  } catch(e) {
+    showToast('Could not connect to server');
+  }
+}
+</script>
+</body>
+</html>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>History – SafeRoute</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#F8F8F8;min-height:100vh;display:flex;justify-content:center}
+.page{width:100%;max-width:420px;min-height:100vh;background:#F8F8F8;padding-bottom:90px}
+
+.page-header{padding:36px 24px 20px;background:#1B5E3B}
+.page-header h1{font-size:22px;font-weight:800;color:white;margin-bottom:4px}
+.page-header p{font-size:13px;color:rgba(255,255,255,0.7)}
+
+.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:20px 20px 0}
+.stat-card{background:white;border-radius:16px;padding:16px 10px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.stat-card .num{font-size:24px;font-weight:800}
+.stat-card .lbl{font-size:10px;color:#AAAAAA;margin-top:3px;line-height:1.4}
+
+.section-label{padding:20px 24px 10px;font-size:12px;font-weight:700;color:#AAAAAA;letter-spacing:0.5px;text-transform:uppercase}
+
+.hist-list{padding:0 20px;display:flex;flex-direction:column;gap:12px}
+
+.hist-card{background:white;border-radius:20px;padding:16px 18px;box-shadow:0 2px 12px rgba(0,0,0,0.06);display:flex;align-items:center;gap:14px}
+.hist-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.hist-icon.safe{background:#E8F5EE}
+.hist-icon.emergency{background:#FFEBEE}
+.hist-icon.extended{background:#FFF8E1}
+.hist-icon.active{background:#E3F2FD}
+
+.hist-details{flex:1;min-width:0}
+.hist-dest{font-size:15px;font-weight:700;color:#1A1A1A;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-time{font-size:12px;color:#AAAAAA}
+.hist-dur{font-size:12px;color:#888;margin-top:2px}
+
+.hist-badge{padding:5px 10px;border-radius:20px;font-size:10px;font-weight:800;flex-shrink:0;letter-spacing:0.3px}
+.hist-badge.safe{background:#E8F5EE;color:#1B5E3B}
+.hist-badge.emergency{background:#FFEBEE;color:#D32F2F}
+.hist-badge.extended{background:#FFF8E1;color:#F59E0B}
+.hist-badge.active{background:#E3F2FD;color:#1565C0}
+
+.empty-state{text-align:center;padding:60px 24px;color:#BBBBBB}
+.empty-state .ei{font-size:60px;margin-bottom:16px}
+.empty-state p{font-size:15px;line-height:1.7}
+.empty-state a{color:#1B5E3B;font-weight:700;text-decoration:none}
+
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:white;display:flex;justify-content:space-around;padding:10px 0 18px;border-top:1px solid #EEEEEE;z-index:100}
+.bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#CCCCCC;font-size:10px;font-weight:600}
+.bottom-nav a.active{color:#1B5E3B}
+.bottom-nav .ni{font-size:22px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="page-header">
+    <h1>Journey History 📋</h1>
+    <p>A full log of all your past journeys</p>
+  </div>
+
+  {% if logs %}
+  {% set safe_count = logs|selectattr('status','equalto','safe')|list|length %}
+  {% set emergency_count = logs|selectattr('status','equalto','emergency_called')|list|length %}
+  {% set extended_count = logs|selectattr('status','equalto','extended')|list|length %}
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="num" style="color:#1B5E3B">{{ logs|length }}</div>
+      <div class="lbl">Total Trips</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" style="color:#1B5E3B">{{ safe_count }}</div>
+      <div class="lbl">Safe Arrivals</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" style="color:#D32F2F">{{ emergency_count }}</div>
+      <div class="lbl">Emergencies</div>
+    </div>
+  </div>
+
+  <div class="section-label">ALL JOURNEYS</div>
+
+  <div class="hist-list">
+    {% for log in logs %}
+    {% if log.status == 'safe' %}
+      {% set icon = '✅' %}{% set cls = 'safe' %}{% set badge = 'SAFE' %}
+    {% elif log.status == 'emergency_called' %}
+      {% set icon = '🚨' %}{% set cls = 'emergency' %}{% set badge = 'EMERGENCY' %}
+    {% elif log.status == 'extended' %}
+      {% set icon = '⏱️' %}{% set cls = 'extended' %}{% set badge = 'EXTENDED' %}
+    {% else %}
+      {% set icon = '🔵' %}{% set cls = 'active' %}{% set badge = 'ACTIVE' %}
+    {% endif %}
+    <div class="hist-card">
+      <div class="hist-icon {{ cls }}">{{ icon }}</div>
+      <div class="hist-details">
+        <div class="hist-dest">{{ log.destination }}</div>
+        <div class="hist-time">{{ log.started_at.strftime('%d %b %Y, %I:%M %p') }}</div>
+        <div class="hist-dur">{{ log.duration_minutes }} min journey</div>
+      </div>
+      <span class="hist-badge {{ cls }}">{{ badge }}</span>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <div class="ei">📋</div>
+    <p>No journey history yet.<br/><a href="/journey">Start your first journey →</a></p>
+  </div>
+  {% endif %}
+
+  <nav class="bottom-nav">
+    <a href="/reminders"><span class="ni">🔔</span>Remind</a>
+    <a href="/saved"><span class="ni">📍</span>Saved</a>
+    <a href="/journey"><span class="ni">🛡️</span>Journey</a>
+    <a href="/history" class="active"><span class="ni">📋</span>History</a>
+  </nav>
+</div>
+</body>
+</html>
