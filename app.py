@@ -71,7 +71,7 @@ def home():
     return render_template('home.html')
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/signin', methods=['GET', 'POST'])
 def login():
     """Login route"""
     if request.method == 'POST':
@@ -98,7 +98,7 @@ def login():
             print(f"Login error: {str(e)}")
             return jsonify({'success': False, 'message': 'Server error. Please try again.'}), 500
 
-    return render_template('login.html')
+    return render_template('signin.html')
 
 
 @app.route('/signup', methods=['GET', 'POST'])
