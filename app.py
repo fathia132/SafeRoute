@@ -226,7 +226,7 @@ def add_contact():
         return jsonify({'success': False, 'message': 'Failed to add contact'}), 500
 
 
-@app.route('/api/logout')
+@app.route('/logout')
 def logout():
     """Logout user"""
     session.clear()
