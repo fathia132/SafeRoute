@@ -74,7 +74,7 @@ h2{font-size:28px;font-weight:800;color:#1A1A1A;text-align:center;margin-bottom:
     </div>
     <button class="btn-login" onclick="doLogin()">LOG IN</button>
     <p class="forgot"><a href="/forgetpassword">Forgot Password?</a></p>
-    <p class="signup-link">DON'T HAVE AN ACCOUNT? <a href="/signup">SIGN UP</a></p>
+    <p class="signup-link">DON'T HAVE AN ACCOUNT? <a href="/signin">SIGN UP</a></p>
   </div>
 </div>
 <div id="toast"></div>
@@ -99,14 +99,14 @@ async function doLogin(){
   const password=document.getElementById('password').value;
   if(!username||!password) return showToast('Please fill all fields');
   try{
-    const res=await fetch('/signin',{
+    const res=await fetch('/login',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({username,password})
     });
     const data=await res.json();
     if(data.success){
-      window.location='/saved';
+      window.location='/dashboard';
     } else {
       showToast(data.message||'Invalid username or password');
     }
