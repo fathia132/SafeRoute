@@ -343,14 +343,14 @@ async function doLogin() {
   const password = document.getElementById('password').value;
   if (!email || !password) return showToast('Please fill all fields');
   try {
-    const res = await fetch('/api/signin', {
+    const res = await fetch('/signin',  {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ username: email, password })
     });
     const data = await res.json();
     if (data.success) {
-      window.location = data.redirect;
+    window.location = '/saved';
     } else {
       showToast(data.error || 'Invalid email or password');
     }
