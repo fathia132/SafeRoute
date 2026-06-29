@@ -3,261 +3,141 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Saved – SafeRoute</title>
+<title>Create Account – SafeRoute</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:#F8F8F8;min-height:100vh;display:flex;justify-content:center}
-.page{width:100%;max-width:420px;min-height:100vh;background:#F8F8F8;padding-bottom:140px}
-
-/* HEADER */
-.page-header{padding:40px 24px 8px}
-.page-header h1{font-size:24px;font-weight:800;color:#1A1A1A;margin-bottom:4px}
-.page-header p{font-size:13px;color:#999;line-height:1.5}
-
-/* HINT BAR */
-.hint-bar{margin:14px 20px 0;background:#E8F5EE;border-radius:14px;padding:12px 16px;font-size:13px;color:#1B5E3B;font-weight:600;display:none;text-align:center}
-.hint-bar.show{display:block}
-
-/* SECTION LABEL */
-.section-label{padding:20px 24px 10px;font-size:13px;font-weight:700;color:#AAAAAA;letter-spacing:0.5px;text-transform:uppercase}
-
-/* REMINDER CARDS */
-.reminder-list{padding:0 20px;display:flex;flex-direction:column;gap:12px}
-.reminder-card{background:white;border-radius:20px;padding:16px 18px;box-shadow:0 2px 14px rgba(0,0,0,0.06);display:flex;align-items:center;gap:14px;cursor:pointer;border:2.5px solid transparent;transition:all 0.2s;-webkit-tap-highlight-color:transparent}
-.reminder-card:active{transform:scale(0.97)}
-.reminder-card.selected{border-color:#1B5E3B;box-shadow:0 4px 20px rgba(27,94,59,0.15)}
-.card-icon{width:48px;height:48px;border-radius:14px;background:#F0FAF4;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;transition:background 0.2s}
-.reminder-card.selected .card-icon{background:#1B5E3B}
-.card-details{flex:1;min-width:0}
-.card-dest{font-size:15px;font-weight:700;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
-.card-time{font-size:13px;color:#555;font-weight:500}
-.card-days{font-size:11px;color:#BBBBBB;margin-top:3px}
-.card-right{display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0}
-.tick{width:24px;height:24px;border-radius:50%;background:#1B5E3B;color:white;display:none;align-items:center;justify-content:center;font-size:13px;font-weight:800}
-.reminder-card.selected .tick{display:flex}
-.del-btn{background:none;border:none;font-size:20px;cursor:pointer;color:#DDDDDD;line-height:1;padding:2px;-webkit-tap-highlight-color:transparent}
-
-/* EMPTY */
-.empty-state{text-align:center;padding:60px 24px;color:#BBBBBB}
-.empty-state .ei{font-size:60px;margin-bottom:16px}
-.empty-state p{font-size:15px;line-height:1.7}
-.empty-state a{color:#1B5E3B;font-weight:700;text-decoration:none}
-
-/* EMERGENCY CARD */
-.emergency-card{margin:20px 20px 0;background:white;border-radius:20px;padding:20px;box-shadow:0 2px 14px rgba(0,0,0,0.06)}
-.emergency-card h3{font-size:15px;font-weight:800;color:#1A1A1A;margin-bottom:4px;display:flex;align-items:center;gap:8px}
-.emergency-card .sub{font-size:12px;color:#999;margin-bottom:16px;line-height:1.5}
-.contact-item{display:flex;align-items:center;gap:12px;background:#F8F8F8;border-radius:14px;padding:12px 14px;margin-bottom:8px}
-.contact-avatar{width:38px;height:38px;border-radius:50%;background:#E8F5EE;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.contact-info{flex:1;min-width:0}
-.contact-name{font-size:13px;font-weight:700;color:#1A1A1A}
-.contact-num{font-size:12px;color:#888;margin-top:1px}
-.no-contacts{font-size:12px;color:#BBBBBB;text-align:center;padding:12px 0}
-
-/* INPUTS */
-.field-group{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
-.inp{width:100%;padding:13px 16px;border:1.5px solid #E8E4DC;border-radius:14px;font-size:14px;font-family:'Inter',sans-serif;background:white;color:#1A1A1A;outline:none;transition:border-color 0.2s;-webkit-appearance:none}
-.inp::placeholder{color:#CCCCCC}
-.inp:focus{border-color:#1B5E3B}
-
-/* BUTTONS */
-.btn-green{width:100%;padding:14px;background:#1B5E3B;color:white;border:none;border-radius:50px;font-size:13px;font-weight:700;letter-spacing:0.5px;font-family:'Inter',sans-serif;cursor:pointer;transition:opacity 0.15s;-webkit-tap-highlight-color:transparent}
-.btn-green:active{opacity:0.85}
-
-/* STICKY FOOTER */
-.sticky-footer{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);width:calc(100% - 40px);max-width:380px;z-index:50}
-.btn-start{width:100%;padding:17px;background:#1B5E3B;color:white;border:none;border-radius:50px;font-size:15px;font-weight:800;letter-spacing:0.5px;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(27,94,59,0.35);transition:all 0.2s;-webkit-tap-highlight-color:transparent}
-.btn-start:disabled{background:#CCCCCC;box-shadow:none;cursor:not-allowed}
-.btn-start:not(:disabled):active{transform:scale(0.97)}
-
-/* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:white;display:flex;justify-content:space-around;padding:10px 0 18px;border-top:1px solid #EEEEEE;z-index:100}
-.bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#CCCCCC;font-size:10px;font-weight:600;-webkit-tap-highlight-color:transparent}
-.bottom-nav a.active{color:#1B5E3B}
-.bottom-nav .ni{font-size:22px}
-
-/* TOAST */
-#toast{position:fixed;bottom:150px;left:50%;transform:translateX(-50%) translateY(16px);background:#1A1A1A;color:white;padding:12px 24px;border-radius:50px;font-size:13px;opacity:0;transition:all 0.3s;z-index:999;pointer-events:none;white-space:nowrap;font-family:'Inter',sans-serif}
+body{font-family:'Inter',sans-serif;background:#F0EDE6;min-height:100vh;display:flex;align-items:flex-start;justify-content:center}
+.page{width:100%;max-width:420px;min-height:100vh;background:#FAFAF8;position:relative}
+.page-header{padding:20px 20px 0}
+.back-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid #E0DAD0;background:white;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#1A1A1A;font-size:16px;cursor:pointer}
+.blob-wrap{position:relative;height:60px;overflow:visible}
+.blob{position:absolute;border-radius:50%;background:#D6EDE0;opacity:0.5}
+.blob-1{width:100px;height:100px;top:-30px;right:20px}
+.blob-2{width:60px;height:60px;top:0px;right:100px;opacity:0.3}
+.signup-wrap{padding:10px 24px 48px}
+h2{font-size:26px;font-weight:800;color:#1A1A1A;margin-bottom:28px;text-align:center;letter-spacing:-0.5px}
+.btn{width:100%;padding:15px 20px;border:none;border-radius:50px;font-size:13px;font-weight:700;letter-spacing:0.8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:opacity 0.15s,transform 0.15s;font-family:'Inter',sans-serif}
+.btn:active{transform:scale(0.97);opacity:0.9}
+.btn-facebook{background:rgb(13,92,13);color:white;margin-bottom:12px}
+.btn-google{background:white;color:#1A1A1A;border:1.5px solid #E0DAD0;margin-bottom:4px}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0 18px;color:#AAAAAA;font-size:11px;font-weight:600;letter-spacing:0.5px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#E8E4DC}
+.input-wrap{position:relative;margin-bottom:12px}
+.input-wrap input{width:100%;padding:15px 44px 15px 16px;border:1.5px solid #E8E4DC;border-radius:14px;font-size:14px;font-family:'Inter',sans-serif;background:white;color:#1A1A1A;outline:none;transition:border-color 0.2s;-webkit-appearance:none}
+.input-wrap input::placeholder{color:#BBBBBB}
+.input-wrap input:focus{border-color:#1B5E3B}
+.input-wrap input.valid{border-color:#2E7D52}
+.check-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#2E7D52;font-size:16px;font-weight:700;display:none}
+.input-wrap input.valid~.check-icon{display:block}
+.eye-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;width:24px;height:24px;user-select:none;display:flex;align-items:center;justify-content:center}
+.privacy-row{display:flex;align-items:center;gap:10px;font-size:13px;color:#666;margin:16px 0 24px}
+.privacy-row input[type=checkbox]{width:18px;height:18px;border-radius:4px;accent-color:#1B5E3B;cursor:pointer;flex-shrink:0}
+.privacy-row a{color:#1B5E3B;text-decoration:underline}
+.btn-primary{background:#1B5E3B;color:white;font-size:14px;font-weight:700;letter-spacing:1px}
+.signin-link{text-align:center;font-size:12px;color:#AAAAAA;margin-top:20px;letter-spacing:0.3px}
+.signin-link a{color:#1B5E3B;font-weight:700;text-decoration:none}
+#toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(16px);background:#1A1A1A;color:white;padding:12px 24px;border-radius:50px;font-size:13px;opacity:0;transition:all 0.3s;z-index:999;pointer-events:none;white-space:nowrap;font-family:'Inter',sans-serif}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 <div class="page">
-
   <div class="page-header">
-    <h1>Saved Destinations</h1>
-    <p>Tap a destination to select it, then start your journey</p>
+    <a href="/" class="back-btn">←</a>
   </div>
-
-  <div class="hint-bar" id="hintBar">✅ Destination selected — tap Start Journey below</div>
-
-  {% if reminders %}
-  <div class="section-label">YOUR SAVED PLACES</div>
-  <div class="reminder-list">
-    {% for r in reminders %}
-    <div class="reminder-card" id="card-{{r.id}}"
-      onclick="selectCard({{r.id}}, '{{r.destination}}', {{r.hour}}, {{r.minute}}, '{{r.period}}')">
-      <div class="card-icon">📍</div>
-      <div class="card-details">
-        <div class="card-dest">{{r.destination}}</div>
-        <div class="card-time">{{r.hour}}:{{ '%02d'|format(r.minute) }} {{r.period}}</div>
-        <div class="card-days">{{r.days.replace(',', ' · ')}}</div>
-      </div>
-      <div class="card-right">
-        <div class="tick">✓</div>
-        <button class="del-btn" onclick="deleteCard(event, {{r.id}})">🗑️</button>
-      </div>
+  <div class="blob-wrap">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+  <div class="signup-wrap">
+    <h2>Create your account</h2>
+    <button class="btn btn-facebook" onclick="window.location='/auth/facebook'">
+      <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
+        <path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+      </svg>
+      CONTINUE WITH FACEBOOK
+    </button>
+    <button class="btn btn-google" onclick="window.location='/auth/google'">
+      <svg width="20" height="20" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      </svg>
+      CONTINUE WITH GOOGLE
+    </button>
+    <div class="divider">OR SIGN UP WITH EMAIL</div>
+    <div class="input-wrap">
+      <input type="text" id="name" placeholder="Username" oninput="validate(this)" autocomplete="username"/>
+      <span class="check-icon">✓</span>
     </div>
-    {% endfor %}
-  </div>
-  {% else %}
-  <div class="empty-state">
-    <div class="ei">🗂️</div>
-    <p>No saved destinations yet.<br/><a href="/reminders">Set your first reminder →</a></p>
-  </div>
-  {% endif %}
-
-  <!-- EMERGENCY CONTACTS -->
-  <div class="section-label">EMERGENCY CONTACTS</div>
-  <div class="emergency-card">
-    <h3>🚨 Emergency Contacts</h3>
-    <p class="sub">Add up to 5 trusted contacts. They will receive a consent SMS and be called automatically if you don't check in. Only people who know they're in your safety circle.</p>
-
-    <div id="contactList"></div>
-
-    <div class="field-group">
-      <input class="inp" type="text" id="cName" placeholder="Contact name (e.g. Mum)" autocomplete="off"/>
-      <input class="inp" type="tel" id="cNum" placeholder="+234 800 000 0000" autocomplete="tel"/>
+    <div class="input-wrap">
+      <input type="email" id="email" placeholder="Email address" oninput="validate(this)" autocomplete="email"/>
+      <span class="check-icon">✓</span>
     </div>
-    <button class="btn-green" onclick="addContact()">+ ADD CONTACT</button>
+    <div class="input-wrap">
+      <input type="password" id="password" placeholder="Password" autocomplete="new-password"/>
+      <span class="eye-icon" id="eyeToggle" onclick="togglePassword()">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path d="M1 11C1 11 4.5 4 11 4C17.5 4 21 11 21 11C21 11 17.5 18 11 18C4.5 18 1 11 1 11Z" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round" fill="white"/>
+          <circle cx="11" cy="11" r="3" fill="#AAAAAA" id="eyePupil"/>
+          <path id="eyeLid" d="M1 11C4.5 4 17.5 4 21 11" stroke="white" stroke-width="7" stroke-linecap="round" fill="none" style="display:none"/>
+          <path id="eyeLash" d="M1 11C4.5 4 17.5 4 21 11" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round" fill="none" style="display:none"/>
+          <line id="eyeStrike" x1="3" y1="19" x2="19" y2="3" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round" style="display:none"/>
+        </svg>
+      </span>
+    </div>
+    <div class="privacy-row">
+      <input type="checkbox" id="privacy"/>
+      <label for="privacy">I have read the <a href="/privacy">Privacy Policy</a></label>
+    </div>
+    <button class="btn btn-primary" onclick="doSignup()">GET STARTED</button>
+    <p class="signin-link">ALREADY HAVE AN ACCOUNT? <a href="/signin">LOG IN</a></p>
   </div>
-
 </div>
-
-<!-- STICKY START BUTTON -->
-<div class="sticky-footer">
-  <button class="btn-start" id="startBtn" onclick="startJourney()" disabled>🛡️ START JOURNEY</button>
-</div>
-
-<nav class="bottom-nav">
-  <a href="/reminders"><span class="ni">🔔</span>Remind</a>
-  <a href="/saved" class="active"><span class="ni">📍</span>Saved</a>
-  <a href="/journey"><span class="ni">🛡️</span>Journey</a>
-  <a href="/history"><span class="ni">📋</span>History</a>
-</nav>
 <div id="toast"></div>
-
 <script>
-// ── STATE ──
-let selId = null, selDest = '', selHour = 0, selMin = 0, selPeriod = 'AM';
-let contacts = JSON.parse(localStorage.getItem('srContacts') || '[]');
-
-// ── TOAST ──
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
+function validate(input){input.classList.toggle('valid',input.value.trim().length>0)}
+let passwordVisible=false;
+function togglePassword(){
+  passwordVisible=!passwordVisible;
+  document.getElementById('password').type=passwordVisible?'text':'password';
+  document.getElementById('eyePupil').style.display=passwordVisible?'none':'block';
+  document.getElementById('eyeLid').style.display=passwordVisible?'block':'none';
+  document.getElementById('eyeLash').style.display=passwordVisible?'block':'none';
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
-
-// ── SELECT CARD ──
-function selectCard(id, dest, hour, min, period) {
-  document.querySelectorAll('.reminder-card').forEach(c => c.classList.remove('selected'));
-  if (selId === id) {
-    selId = null;
-    document.getElementById('startBtn').disabled = true;
-    document.getElementById('hintBar').classList.remove('show');
-    return;
-  }
-  document.getElementById('card-' + id).classList.add('selected');
-  selId = id; selDest = dest; selHour = hour; selMin = min; selPeriod = period;
-  document.getElementById('startBtn').disabled = false;
-  document.getElementById('hintBar').classList.add('show');
-}
-
-// ── START JOURNEY ──
-function startJourney() {
-  if (!selId) return toast('Please select a destination first');
-  const p = new URLSearchParams({ dest: selDest, hour: selHour, min: selMin, period: selPeriod });
-  window.location = '/journey?' + p.toString();
-}
-
-// ── DELETE CARD ──
-async function deleteCard(e, id) {
-  e.stopPropagation();
-  if (!confirm('Delete this reminder?')) return;
-  try {
-    const r = await fetch('/api/reminders/' + id, { method: 'DELETE' });
-    const d = await r.json();
-    if (d.success) {
-      document.getElementById('card-' + id).remove();
-      if (selId === id) {
-        selId = null;
-        document.getElementById('startBtn').disabled = true;
-        document.getElementById('hintBar').classList.remove('show');
-      }
-      toast('Deleted');
-    }
-  } catch { toast('Could not delete'); }
-}
-
-// ── EMERGENCY CONTACTS ──
-function renderContacts() {
-  const list = document.getElementById('contactList');
-  if (contacts.length === 0) {
-    list.innerHTML = '<p class="no-contacts">No contacts added yet</p>';
-    return;
-  }
-  list.innerHTML = contacts.map((c, i) => `
-    <div class="contact-item">
-      <div class="contact-avatar">👤</div>
-      <div class="contact-info">
-        <div class="contact-name">${c.name}</div>
-        <div class="contact-num">${c.number}</div>
-        <div style="font-size:10px;color:#1B5E3B;margin-top:2px;font-weight:600">✅ Consent SMS sent</div>
-      </div>
-      <button onclick="removeContact(${i})" style="background:none;border:none;font-size:20px;cursor:pointer;color:#DDD;padding:4px">🗑️</button>
-    </div>
-  `).join('');
-}
-
-function addContact() {
-  if (contacts.length >= 5) return toast('Maximum 5 contacts allowed');
-  const name = document.getElementById('cName').value.trim();
-  const number = document.getElementById('cNum').value.trim();
-  if (!name) return toast('Enter a name for this contact');
-  if (!number) return toast('Enter a phone number');
-  const newContact = { name, number, confirmed: false };
-  contacts.push(newContact);
-  localStorage.setItem('srContacts', JSON.stringify(contacts));
-  document.getElementById('cName').value = '';
-  document.getElementById('cNum').value = '';
-  renderContacts();
-  // Send SMS consent message + sync to server
-  syncContacts(newContact);
-  toast(name + ' added ✅ — Consent SMS sent to them');
-}
-
-function removeContact(i) {
-  contacts.splice(i, 1);
-  localStorage.setItem('srContacts', JSON.stringify(contacts));
-  renderContacts();
-  syncContacts();
-  toast('Contact removed');
-}
-
-async function syncContacts(newContact = null) {
-  try {
-    await fetch('/api/emergency-contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contacts, new_contact: newContact })
+async function doSignup(){
+  const name=document.getElementById('name').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const password=document.getElementById('password').value;
+  const privacy=document.getElementById('privacy').checked;
+  if(!name||!email||!password) return showToast('Please fill all fields');
+  if(!privacy) return showToast('Please accept the Privacy Policy');
+  if(password.length<6) return showToast('Password must be at least 6 characters');
+  try{
+    const res=await fetch('/signup',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({username:name,email,password})
     });
-  } catch {}
+    const data=await res.json();
+    if(data.success){
+      window.location='/saved';
+    } else {
+      showToast(data.message||'Signup failed');
+    }
+  } catch(e){
+    showToast('Could not connect to server');
+  }
 }
-
-renderContacts();
 </script>
 </body>
 </html>
