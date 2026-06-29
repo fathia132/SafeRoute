@@ -6,23 +6,18 @@ from dotenv import load_dotenv
 from twilio.rest import Client
 import datetime
 
-# Load environment variables
 load_dotenv()
 
-# Initialize Flask app
 app = Flask(__name__)
 
-# Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///database.db')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
 app.config['SESSION_COOKIE_SECURE'] = os.getenv('SESSION_COOKIE_SECURE', False)
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
-# Initialize database
 db = SQLAlchemy(app)
 
-# Twilio Configuration
 TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
@@ -31,9 +26,6 @@ if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
     twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 else:
     twilio_client = None
-    print("⚠️  WARNING: Twilio credentials not configured. SMS alerts will not work.")
-
-# ==================== MODELS ====================
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -61,36 +53,30 @@ class EmergencyContact(db.Model):
     relationship = db.Column(db.String(50))
 
 
-# ==================== ROUTES ====================
-
 @app.route('/')
 def home():
-    """Home page"""
     if 'user_id' in session:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('saved'))
     return render_template('home.html')
 
 
 @app.route('/signin', methods=['GET', 'POST'])
 def login():
-    """Login route"""
     if request.method == 'POST':
         try:
             data = request.get_json()
             username = data.get('username')
             password = data.get('password')
 
-            # Validate input
             if not username or not password:
                 return jsonify({'success': False, 'message': 'Missing username or password'}), 400
 
-            # Find user
             user = User.query.filter_by(username=username).first()
 
             if user and user.check_password(password):
                 session['user_id'] = user.id
                 session['username'] = user.username
-                return jsonify({'success': True, 'message': 'Login successful'}), 200
+                return jsonify({'success': True, 'message': 'Login successful', 'redirect': '/saved'}), 200
             else:
                 return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
 
@@ -103,7 +89,6 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signin():
-    """Sign up route"""
     if request.method == 'POST':
         try:
             data = request.get_json()
@@ -112,28 +97,24 @@ def signin():
             password = data.get('password')
             phone = data.get('phone')
 
-            # Validate input
             if not all([username, email, password]):
                 return jsonify({'success': False, 'message': 'Missing required fields'}), 400
 
-            # Check if user exists
             if User.query.filter_by(username=username).first():
                 return jsonify({'success': False, 'message': 'Username already exists'}), 409
 
             if User.query.filter_by(email=email).first():
                 return jsonify({'success': False, 'message': 'Email already registered'}), 409
 
-            # Create new user
             user = User(username=username, email=email, phone=phone)
             user.set_password(password)
             db.session.add(user)
             db.session.commit()
 
-            # Log user in
             session['user_id'] = user.id
             session['username'] = user.username
 
-            return jsonify({'success': True, 'message': 'Account created successfully'}), 201
+            return jsonify({'success': True, 'message': 'Account created successfully', 'redirect': '/saved'}), 201
 
         except Exception as e:
             db.session.rollback()
@@ -141,16 +122,60 @@ def signin():
             return jsonify({'success': False, 'message': 'Server error. Please try again.'}), 500
 
     return render_template('signup.html')
+
+
 @app.route('/saved')
 def saved():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template('saved.html')
+    user = User.query.get(session['user_id'])
+    contacts = EmergencyContact.query.filter_by(user_id=session['user_id']).all()
+    return render_template('saved.html', user=user, contacts=contacts)
+
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    user = User.query.get(session['user_id'])
+    contacts = EmergencyContact.query.filter_by(user_id=session['user_id']).all()
+    return render_template('dashboard.html', user=user, contacts=contacts)
+
+
+@app.route('/home')
+def user_home():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    user = User.query.get(session['user_id'])
+    return render_template('home.html', user=user)
+
+
+@app.route('/journey')
+def journey():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    user = User.query.get(session['user_id'])
+    return render_template('journey.html', user=user)
+
+
+@app.route('/reminders')
+def reminders():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    user = User.query.get(session['user_id'])
+    return render_template('reminders.html', user=user)
+
+
+@app.route('/history')
+def history():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    user = User.query.get(session['user_id'])
+    return render_template('history.html', user=user)
 
 
 @app.route('/emergency', methods=['POST'])
 def emergency_alert():
-    """Trigger emergency alert"""
     if 'user_id' not in session:
         return jsonify({'success': False, 'message': 'Not authenticated'}), 401
 
@@ -165,11 +190,9 @@ def emergency_alert():
         if not contacts:
             return jsonify({'success': False, 'message': 'No emergency contacts added'}), 400
 
-        # Google Maps URL
         location_url = f"https://maps.google.com/?q={latitude},{longitude}"
         message = f"EMERGENCY: {user.username} needs help! Location: {location_url}"
 
-        # Send SMS to all contacts
         if twilio_client:
             for contact in contacts:
                 try:
@@ -178,15 +201,10 @@ def emergency_alert():
                         from_=TWILIO_PHONE_NUMBER,
                         to=contact.phone_number
                     )
-                    print(f"✓ SMS sent to {contact.phone_number}")
                 except Exception as e:
-                    print(f"✗ SMS failed for {contact.phone_number}: {str(e)}")
+                    print(f"SMS failed: {str(e)}")
 
-        return jsonify({
-            'success': True,
-            'message': 'Emergency alert sent',
-            'contacts_notified': len(contacts)
-        }), 200
+        return jsonify({'success': True, 'message': 'Emergency alert sent', 'contacts_notified': len(contacts)}), 200
 
     except Exception as e:
         print(f"Emergency alert error: {str(e)}")
@@ -195,7 +213,6 @@ def emergency_alert():
 
 @app.route('/add-contact', methods=['POST'])
 def add_contact():
-    """Add emergency contact"""
     if 'user_id' not in session:
         return jsonify({'success': False, 'message': 'Not authenticated'}), 401
 
@@ -210,7 +227,6 @@ def add_contact():
         )
         db.session.add(contact)
         db.session.commit()
-
         return jsonify({'success': True, 'message': 'Contact added'}), 201
 
     except Exception as e:
@@ -219,47 +235,47 @@ def add_contact():
         return jsonify({'success': False, 'message': 'Failed to add contact'}), 500
 
 
+@app.route('/delete-contact/<int:contact_id>', methods=['DELETE'])
+def delete_contact(contact_id):
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Not authenticated'}), 401
+    contact = EmergencyContact.query.filter_by(id=contact_id, user_id=session['user_id']).first()
+    if contact:
+        db.session.delete(contact)
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Contact deleted'}), 200
+    return jsonify({'success': False, 'message': 'Contact not found'}), 404
+
+
 @app.route('/logout')
 def logout():
-    """Logout user"""
     session.clear()
     return redirect(url_for('home'))
 
 
 @app.route('/privacy')
 def privacy():
-    """Privacy policy page"""
     return render_template('privacy.html')
 
 
 @app.errorhandler(404)
 def not_found(error):
-    """Handle 404 errors"""
     return render_template('404.html'), 404
 
 
 @app.errorhandler(500)
 def server_error(error):
-    """Handle 500 errors"""
     return jsonify({'error': 'Internal server error'}), 500
 
-
-# ==================== DATABASE INITIALIZATION ====================
 
 with app.app_context():
     db.create_all()
     print("✓ Database initialized")
 
 
-# ==================== RUN APP ====================
-
 if __name__ == '__main__':
-    # Development vs Production
     debug_mode = os.getenv('FLASK_ENV') == 'development'
-    
     if debug_mode:
-        print("🚀 Running in DEVELOPMENT mode")
         app.run(debug=True, host='0.0.0.0', port=5000)
     else:
-        print("🚀 Running in PRODUCTION mode")
         app.run(debug=False, host='0.0.0.0', port=int(os.getenv('PORT', 5000)))
