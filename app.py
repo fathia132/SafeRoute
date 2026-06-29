@@ -141,18 +141,11 @@ def signin():
             return jsonify({'success': False, 'message': 'Server error. Please try again.'}), 500
 
     return render_template('signup.html')
-
-
-@app.route('/dashboard')
-def dashboard():
-    """User dashboard"""
+@app.route('/saved')
+def saved():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
-    user = User.query.get(session['user_id'])
-    contacts = EmergencyContact.query.filter_by(user_id=session['user_id']).all()
-    
-    return render_template('dashboard.html', user=user, contacts=contacts)
+    return render_template('saved.html')
 
 
 @app.route('/emergency', methods=['POST'])
