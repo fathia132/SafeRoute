@@ -353,7 +353,7 @@ async function doSignup() {
     });
     const data = await res.json();
     if (data.success) {
-      window.location = '/dashboard';
+     window.location = '/saved';
     } else {
       showToast(data.error || 'Signup failed');
     }
