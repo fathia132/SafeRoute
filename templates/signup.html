@@ -346,7 +346,7 @@ async function doSignup() {
   if (password.length < 6) return showToast('Password must be at least 6 characters');
 
   try {
-    const res = await fetch('/api/signup', {
+    const res = await fetch('/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
      body: JSON.stringify({ username: name, email, password })
