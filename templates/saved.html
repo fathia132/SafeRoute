@@ -45,8 +45,11 @@ body{font-family:'Inter',sans-serif;background:#F8F8F8;min-height:100vh;display:
 .contact-num{font-size:12px;color:#888;margin-top:1px}
 .no-contacts{font-size:12px;color:#BBBBBB;text-align:center;padding:12px 0}
 .sticky-footer{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);width:calc(100% - 40px);max-width:380px;z-index:50}
-.btn-start{width:100%;padding:17px;background:#1B5E3B;color:white;border:none;border-radius:50px;font-size:15px;font-weight:800;letter-spacing:0.5px;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(27,94,59,0.35);transition:all 0.2s}
-.btn-start:disabled{background:#CCCCCC;box-shadow:none;cursor:not-allowed}
+.btn-emergency{width:100%;padding:17px;background:#FF4444;color:white;border:none;border-radius:50px;font-size:15px;font-weight:800;letter-spacing:0.5px;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(255,68,68,0.35);transition:all 0.2s}
+.btn-emergency:active{opacity:0.85}
+.btn-emergency:disabled{background:#CCCCCC;box-shadow:none;cursor:not-allowed}
+.btn-voice{width:100%;padding:14px;background:#4CAF50;color:white;border:none;border-radius:50px;font-size:13px;font-weight:700;letter-spacing:0.5px;font-family:'Inter',sans-serif;cursor:pointer;margin-top:10px;transition:opacity 0.15s}
+.btn-voice:active{opacity:0.85}
 .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:white;display:flex;justify-content:space-around;padding:10px 0 18px;border-top:1px solid #EEEEEE;z-index:100}
 .bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#CCCCCC;font-size:10px;font-weight:600}
 .bottom-nav a.active{color:#1B5E3B}
@@ -59,30 +62,13 @@ body{font-family:'Inter',sans-serif;background:#F8F8F8;min-height:100vh;display:
 <div class="page">
   <div class="page-header">
     <h1>Saved Destinations</h1>
-    <p>Add a destination, select it, then start your journey</p>
-  </div>
-
-  <div class="hint-bar" id="hintBar">✅ Destination selected — tap Start Journey below</div>
-
-  <div class="section-label">ADD DESTINATION</div>
-  <div class="add-dest-card">
-    <h3>📍 Where are you going?</h3>
-    <div class="field-group">
-      <input class="inp" type="text" id="destInput" placeholder="e.g. Lagos Island Market" autocomplete="off"/>
-      <input class="inp" type="time" id="timeInput"/>
-    </div>
-    <button class="btn-green" onclick="addDestination()">+ SAVE DESTINATION</button>
-  </div>
-
-  <div class="section-label">YOUR SAVED PLACES</div>
-  <div class="reminder-list" id="reminderList">
-    <p style="text-align:center;color:#BBBBBB;padding:20px;font-size:14px">No saved destinations yet</p>
+    <p>Add emergency contacts to get started</p>
   </div>
 
   <div class="section-label">EMERGENCY CONTACTS</div>
   <div class="emergency-card">
     <h3>🚨 Emergency Contacts</h3>
-    <p class="sub">Add trusted contacts who will be notified if you don't check in safely.</p>
+    <p class="sub">Add trusted contacts who will be notified when you trigger an emergency alert.</p>
     <div id="contactList"></div>
     <div class="field-group">
       <input class="inp" type="text" id="cName" placeholder="Contact name (e.g. Mum)" autocomplete="off"/>
@@ -93,94 +79,26 @@ body{font-family:'Inter',sans-serif;background:#F8F8F8;min-height:100vh;display:
 </div>
 
 <div class="sticky-footer">
-  <button class="btn-start" id="startBtn" onclick="startJourney()" disabled>🛡️ START JOURNEY</button>
+  <button class="btn-emergency" id="emergencyBtn" onclick="triggerEmergency()">🚨 EMERGENCY ALERT</button>
+  <button class="btn-voice" onclick="window.location='/voice-trigger'">🎤 Voice Trigger</button>
 </div>
 
 <nav class="bottom-nav">
-  <a href="/reminders"><span class="ni">🔔</span>Remind</a>
-  <a href="/saved" class="active"><span class="ni">📍</span>Saved</a>
-  <a href="/journey"><span class="ni">🛡️</span>Journey</a>
-  <a href="/history"><span class="ni">📋</span>History</a>
+  <a href="/dashboard" class="active"><span class="ni">📍</span>Saved</a>
+  <a href="/alert-history"><span class="ni">📋</span>History</a>
+  <a href="/privacy"><span class="ni">🔐</span>Privacy</a>
+  <a href="/logout"><span class="ni">🚪</span>Logout</a>
 </nav>
 <div id="toast"></div>
 
 <script>
-let selId=null, selDest='', selTime='';
-let destinations=JSON.parse(localStorage.getItem('srDestinations')||'[]');
-let contacts=JSON.parse(localStorage.getItem('srContacts')||'[]');
+let contacts=[];
 
 function toast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
-}
-
-function addDestination(){
-  const dest=document.getElementById('destInput').value.trim();
-  const time=document.getElementById('timeInput').value;
-  if(!dest) return toast('Please enter a destination');
-  if(!time) return toast('Please select a time');
-  const id=Date.now();
-  destinations.push({id, dest, time});
-  localStorage.setItem('srDestinations', JSON.stringify(destinations));
-  document.getElementById('destInput').value='';
-  document.getElementById('timeInput').value='';
-  renderDestinations();
-  toast('Destination saved! ✅');
-}
-
-function renderDestinations(){
-  const list=document.getElementById('reminderList');
-  if(destinations.length===0){
-    list.innerHTML='<p style="text-align:center;color:#BBBBBB;padding:20px;font-size:14px">No saved destinations yet</p>';
-    return;
-  }
-  list.innerHTML=destinations.map(d=>`
-    <div class="reminder-card" id="card-${d.id}" onclick="selectCard(${d.id},'${d.dest}','${d.time}')">
-      <div class="card-icon">📍</div>
-      <div class="card-details">
-        <div class="card-dest">${d.dest}</div>
-        <div class="card-time">${d.time}</div>
-      </div>
-      <div class="card-right">
-        <div class="tick">✓</div>
-        <button class="del-btn" onclick="deleteCard(event,${d.id})">🗑️</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function selectCard(id, dest, time){
-  document.querySelectorAll('.reminder-card').forEach(c=>c.classList.remove('selected'));
-  if(selId===id){
-    selId=null;
-    document.getElementById('startBtn').disabled=true;
-    document.getElementById('hintBar').classList.remove('show');
-    return;
-  }
-  document.getElementById('card-'+id).classList.add('selected');
-  selId=id; selDest=dest; selTime=time;
-  document.getElementById('startBtn').disabled=false;
-  document.getElementById('hintBar').classList.add('show');
-}
-
-function deleteCard(e, id){
-  e.stopPropagation();
-  destinations=destinations.filter(d=>d.id!==id);
-  localStorage.setItem('srDestinations', JSON.stringify(destinations));
-  if(selId===id){
-    selId=null;
-    document.getElementById('startBtn').disabled=true;
-    document.getElementById('hintBar').classList.remove('show');
-  }
-  renderDestinations();
-  toast('Deleted');
-}
-
-function startJourney(){
-  if(!selId) return toast('Please select a destination first');
-  window.location='/journey?dest='+encodeURIComponent(selDest)+'&time='+encodeURIComponent(selTime);
 }
 
 function renderContacts(){
@@ -193,37 +111,96 @@ function renderContacts(){
     <div class="contact-item">
       <div class="contact-avatar">👤</div>
       <div class="contact-info">
-        <div class="contact-name">${c.name}</div>
-        <div class="contact-num">${c.number}</div>
+        <div class="contact-name">${c.contact_name}</div>
+        <div class="contact-num">${c.phone_number}</div>
       </div>
-      <button onclick="removeContact(${i})" style="background:none;border:none;font-size:20px;cursor:pointer;color:#DDD;padding:4px">🗑️</button>
+      <button onclick="removeContact(${c.id})" style="background:none;border:none;font-size:20px;cursor:pointer;color:#DDD;padding:4px">🗑️</button>
     </div>
   `).join('');
 }
 
-function addContact(){
-  if(contacts.length>=5) return toast('Maximum 5 contacts allowed');
+async function addContact(){
   const name=document.getElementById('cName').value.trim();
   const number=document.getElementById('cNum').value.trim();
-  if(!name) return toast('Enter a contact name');
-  if(!number) return toast('Enter a phone number');
-  contacts.push({name, number});
-  localStorage.setItem('srContacts', JSON.stringify(contacts));
-  document.getElementById('cName').value='';
-  document.getElementById('cNum').value='';
-  renderContacts();
-  toast(name+' added ✅');
+  if(!name) return toast('Enter contact name');
+  if(!number) return toast('Enter phone number');
+  
+  try{
+    const res=await fetch('/add-contact',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:name, phone:number, email:'', relationship:''})
+    });
+    const data=await res.json();
+    if(data.success){
+      document.getElementById('cName').value='';
+      document.getElementById('cNum').value='';
+      loadContacts();
+      toast(name+' added ✅');
+    } else {
+      toast(data.message||'Failed to add contact');
+    }
+  }catch(e){
+    toast('Error: '+e.message);
+  }
 }
 
-function removeContact(i){
-  contacts.splice(i,1);
-  localStorage.setItem('srContacts', JSON.stringify(contacts));
-  renderContacts();
+async function removeContact(id){
   toast('Contact removed');
 }
 
-renderDestinations();
-renderContacts();
+async function triggerEmergency(){
+  if(contacts.length===0) return toast('Add emergency contacts first');
+  
+  const btn=document.getElementById('emergencyBtn');
+  btn.disabled=true;
+  btn.textContent='⏳ Sending...';
+  
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(async (pos)=>{
+      try{
+        const res=await fetch('/emergency',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            trigger_type: 'manual'
+          })
+        });
+        const data=await res.json();
+        if(data.success){
+          toast('🚨 Alert sent to '+data.contacts_notified+' contacts!');
+        } else {
+          toast(data.message||'Failed to send alert');
+        }
+        btn.textContent='🚨 EMERGENCY ALERT';
+        btn.disabled=false;
+      }catch(e){
+        toast('Error: '+e.message);
+        btn.textContent='🚨 EMERGENCY ALERT';
+        btn.disabled=false;
+      }
+    }, (err)=>{
+      toast('Enable location access');
+      btn.textContent='🚨 EMERGENCY ALERT';
+      btn.disabled=false;
+    });
+  }else{
+    toast('Location not available');
+    btn.textContent='🚨 EMERGENCY ALERT';
+    btn.disabled=false;
+  }
+}
+
+async function loadContacts(){
+  try{
+    const res=await fetch('/dashboard');
+    window.location.reload();
+  }catch(e){}
+}
+
+loadContacts();
 </script>
 </body>
 </html>
