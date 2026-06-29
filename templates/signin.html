@@ -7,32 +7,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:#F0EDE6;min-height:100vh;display:flex;justify-content:center;}
-.page{width:100%;max-width:420px;min-height:100vh;background:white;position:relative;overflow:hidden;}
-.blob-tr{position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:#E8F5EE;opacity:0.6;z-index:0;}
-.blob-tr2{position:absolute;top:20px;right:30px;width:80px;height:80px;border-radius:50%;background:#D0EAD9;opacity:0.4;z-index:0;}
-.page-header{padding:20px 20px 0;position:relative;z-index:1;}
-.back-btn{width:38px;height:38px;border-radius:50%;border:1.5px solid #E0DAD0;background:white;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#1A1A1A;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,0.07);}
-.content{padding:28px 24px 48px;position:relative;z-index:1;}
-h2{font-size:28px;font-weight:800;color:#1A1A1A;text-align:center;margin-bottom:32px;letter-spacing:-0.5px;}
-.btn-facebook{width:100%;padding:16px 20px;background:#1B5E3B;color:white;border:none;border-radius:50px;font-size:13px;font-weight:700;letter-spacing:0.8px;font-family:'Inter',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px;transition:opacity 0.15s;}
-.btn-facebook:active{opacity:0.85}
-.btn-google{width:100%;padding:16px 20px;background:white;color:#1A1A1A;border:1.5px solid #E0DAD0;border-radius:50px;font-size:13px;font-weight:700;letter-spacing:0.8px;font-family:'Inter',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px;transition:all 0.15s;}
-.divider{display:flex;align-items:center;gap:12px;margin:22px 0 20px;color:#BBBBBB;font-size:11px;font-weight:600;letter-spacing:0.5px;}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:#EEEEEE;}
-.input-wrap{position:relative;margin-bottom:12px;}
-.input-wrap input{width:100%;padding:16px 48px 16px 18px;border:none;border-radius:14px;font-size:14px;font-family:'Inter',sans-serif;background:#F4F4F4;color:#1A1A1A;outline:none;transition:background 0.2s,box-shadow 0.2s;-webkit-appearance:none;}
+body{font-family:'Inter',sans-serif;background:#F0EDE6;min-height:100vh;display:flex;justify-content:center}
+.page{width:100%;max-width:420px;min-height:100vh;background:white;position:relative;overflow:hidden}
+.blob-tr{position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:#E8F5EE;opacity:0.6;z-index:0}
+.blob-tr2{position:absolute;top:20px;right:30px;width:80px;height:80px;border-radius:50%;background:#D0EAD9;opacity:0.4;z-index:0}
+.page-header{padding:20px 20px 0;position:relative;z-index:1}
+.back-btn{width:38px;height:38px;border-radius:50%;border:1.5px solid #E0DAD0;background:white;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#1A1A1A;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,0.07)}
+.content{padding:28px 24px 48px;position:relative;z-index:1}
+h2{font-size:28px;font-weight:800;color:#1A1A1A;text-align:center;margin-bottom:32px;letter-spacing:-0.5px}
+.btn-facebook{width:100%;padding:16px 20px;background:#1B5E3B;color:white;border:none;border-radius:50px;font-size:13px;font-weight:700;letter-spacing:0.8px;font-family:'Inter',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px;transition:opacity 0.15s}
+.btn-google{width:100%;padding:16px 20px;background:white;color:#1A1A1A;border:1.5px solid #E0DAD0;border-radius:50px;font-size:13px;font-weight:700;letter-spacing:0.8px;font-family:'Inter',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px}
+.divider{display:flex;align-items:center;gap:12px;margin:22px 0 20px;color:#BBBBBB;font-size:11px;font-weight:600;letter-spacing:0.5px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#EEEEEE}
+.input-wrap{position:relative;margin-bottom:12px}
+.input-wrap input{width:100%;padding:16px 48px 16px 18px;border:none;border-radius:14px;font-size:14px;font-family:'Inter',sans-serif;background:#F4F4F4;color:#1A1A1A;outline:none;-webkit-appearance:none}
 .input-wrap input::placeholder{color:#BBBBBB}
-.input-wrap input:focus{background:#EFEFEF;box-shadow:0 0 0 2px #1B5E3B30;}
-.input-wrap input.valid{background:#F0FAF4;box-shadow:0 0 0 2px #1B5E3B40;}
-.eye-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center;user-select:none;}
-.btn-login{width:100%;padding:17px;background:#1B5E3B;color:white;border:none;border-radius:50px;font-size:15px;font-weight:800;letter-spacing:0.8px;font-family:'Inter',sans-serif;cursor:pointer;margin-top:8px;transition:opacity 0.15s;}
-.btn-login:active{opacity:0.85}
-.forgot{text-align:center;margin-top:18px;font-size:13px;color:#AAAAAA;}
-.forgot a{color:#1A1A1A;font-weight:600;text-decoration:none;}
-.signup-link{text-align:center;font-size:12px;color:#BBBBBB;margin-top:32px;letter-spacing:0.3px;}
-.signup-link a{color:#1B5E3B;font-weight:800;text-decoration:none;}
-#toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(16px);background:#1A1A1A;color:white;padding:12px 24px;border-radius:50px;font-size:13px;opacity:0;transition:all 0.3s;z-index:999;pointer-events:none;white-space:nowrap;font-family:'Inter',sans-serif;}
+.input-wrap input:focus{background:#EFEFEF;box-shadow:0 0 0 2px #1B5E3B30}
+.eye-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center;user-select:none}
+.btn-login{width:100%;padding:17px;background:#1B5E3B;color:white;border:none;border-radius:50px;font-size:15px;font-weight:800;letter-spacing:0.8px;font-family:'Inter',sans-serif;cursor:pointer;margin-top:8px}
+.forgot{text-align:center;margin-top:18px;font-size:13px;color:#AAAAAA}
+.forgot a{color:#1A1A1A;font-weight:600;text-decoration:none}
+.signup-link{text-align:center;font-size:12px;color:#BBBBBB;margin-top:32px;letter-spacing:0.3px}
+.signup-link a{color:#1B5E3B;font-weight:800;text-decoration:none}
+#toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(16px);background:#1A1A1A;color:white;padding:12px 24px;border-radius:50px;font-size:13px;opacity:0;transition:all 0.3s;z-index:999;pointer-events:none;white-space:nowrap;font-family:'Inter',sans-serif}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
@@ -62,12 +59,11 @@ h2{font-size:28px;font-weight:800;color:#1A1A1A;text-align:center;margin-bottom:
     </button>
     <div class="divider">OR LOG IN WITH EMAIL</div>
     <div class="input-wrap">
-      <input type="text" id="username" placeholder="Username or Email"
-        oninput="markValid(this)" autocomplete="username"/>
+      <input type="text" id="username" placeholder="Username" oninput="markValid(this)" autocomplete="username"/>
     </div>
     <div class="input-wrap">
       <input type="password" id="password" placeholder="Password" autocomplete="current-password"/>
-      <span class="eye-icon" id="eyeToggle" onclick="togglePw()">
+      <span class="eye-icon" onclick="togglePw()">
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
           <path d="M1 11C1 11 4.5 4 11 4C17.5 4 21 11 21 11C21 11 17.5 18 11 18C4.5 18 1 11 1 11Z" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round" fill="white"/>
           <circle cx="11" cy="11" r="3" fill="#AAAAAA" id="eyePupil"/>
@@ -83,40 +79,38 @@ h2{font-size:28px;font-weight:800;color:#1A1A1A;text-align:center;margin-bottom:
 </div>
 <div id="toast"></div>
 <script>
-function markValid(input) {
-  input.classList.toggle('valid', input.value.trim().length > 0);
+function markValid(input){input.classList.toggle('valid',input.value.trim().length>0)}
+let pwVisible=false;
+function togglePw(){
+  pwVisible=!pwVisible;
+  document.getElementById('password').type=pwVisible?'text':'password';
+  document.getElementById('eyePupil').style.display=pwVisible?'none':'block';
+  document.getElementById('eyeLid').style.display=pwVisible?'block':'none';
+  document.getElementById('eyeLash').style.display=pwVisible?'block':'none';
 }
-let pwVisible = false;
-function togglePw() {
-  pwVisible = !pwVisible;
-  document.getElementById('password').type = pwVisible ? 'text' : 'password';
-  document.getElementById('eyePupil').style.display = pwVisible ? 'none' : 'block';
-  document.getElementById('eyeLid').style.display = pwVisible ? 'block' : 'none';
-  document.getElementById('eyeLash').style.display = pwVisible ? 'block' : 'none';
-}
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
-async function doLogin() {
-  const username = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value;
-  if (!username || !password) return showToast('Please fill all fields');
-  try {
-    const res = await fetch('/signin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+async function doLogin(){
+  const username=document.getElementById('username').value.trim();
+  const password=document.getElementById('password').value;
+  if(!username||!password) return showToast('Please fill all fields');
+  try{
+    const res=await fetch('/signin',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({username,password})
     });
-    const data = await res.json();
-    if (data.success) {
-      window.location = '/saved';
+    const data=await res.json();
+    if(data.success){
+      window.location='/saved';
     } else {
-      showToast(data.message || 'Invalid username or password');
+      showToast(data.message||'Invalid username or password');
     }
-  } catch(e) {
+  } catch(e){
     showToast('Could not connect to server');
   }
 }
