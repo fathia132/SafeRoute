@@ -3,6 +3,5 @@ Flask-SQLAlchemy==3.1.1
 Werkzeug==3.1.3
 python-dotenv==1.2.2
 twilio==9.10.9
-psycopg2-binary
 gunicorn
 SQLAlchemy==2.0.51
