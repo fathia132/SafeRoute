@@ -71,7 +71,7 @@ def home():
     return render_template('home.html')
 
 
-@app.route('/api/signin', methods=['GET', 'POST'])
+@app.route('/signin', methods=['GET', 'POST'])
 def login():
     """Login route"""
     if request.method == 'POST':
@@ -101,7 +101,7 @@ def login():
     return render_template('signin.html')
 
 
-@app.route('/api/signup', methods=['GET', 'POST'])
+@app.route('/signup', methods=['GET', 'POST'])
 def signin():
     """Sign up route"""
     if request.method == 'POST':
