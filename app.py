@@ -71,7 +71,7 @@ def home():
     return render_template('home.html')
 
 
-@app.route('/signin', methods=['GET', 'POST'])
+@app.route('/api/signin', methods=['GET', 'POST'])
 def login():
     """Login route"""
     if request.method == 'POST':
@@ -101,7 +101,7 @@ def login():
     return render_template('signin.html')
 
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/api/signup', methods=['GET', 'POST'])
 def signin():
     """Sign up route"""
     if request.method == 'POST':
@@ -226,7 +226,7 @@ def add_contact():
         return jsonify({'success': False, 'message': 'Failed to add contact'}), 500
 
 
-@app.route('/logout')
+@app.route('/api/logout')
 def logout():
     """Logout user"""
     session.clear()
