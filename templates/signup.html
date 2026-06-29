@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Create Account – Safety Saver</title>
+<title>Create Account – SafeRoute</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
@@ -306,7 +305,7 @@
 
     <button class="btn btn-primary" onclick="doSignup()">GET STARTED</button>
 
-    <p class="signin-link">ALREADY HAVE AN ACCOUNT? <a href="/signin">LOG IN</a></p>
+    <p class="signin-link">ALREADY HAVE AN ACCOUNT? <a href="/login">LOG IN</a></p>
   </div>
 </div>
 <div id="toast"></div>
@@ -322,7 +321,6 @@ function togglePassword() {
   const pw = document.getElementById('password');
   const eye = document.getElementById('eyeToggle');
   pw.type = passwordVisible ? 'text' : 'password';
-  // SVG eyelid open/close
   document.getElementById('eyePupil').style.display = passwordVisible ? 'block' : 'none';
   document.getElementById('eyeLid').style.display = passwordVisible ? 'block' : 'none';
   document.getElementById('eyeLash').style.display = passwordVisible ? 'block' : 'none';
@@ -346,14 +344,14 @@ async function doSignup() {
   if (password.length < 6) return showToast('Password must be at least 6 characters');
 
   try {
-    const res = await fetch('/signup', {
+    const res = await fetch('/signin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-     body: JSON.stringify({ username: name, email, password })
+      body: JSON.stringify({ username: name, email, password })
     });
     const data = await res.json();
     if (data.success) {
-     window.location = '/saved';
+      window.location = '/dashboard';
     } else {
       showToast(data.error || 'Signup failed');
     }
@@ -362,8 +360,5 @@ async function doSignup() {
   }
 }
 </script>
-</body>
-</html>
-
 </body>
 </html>
